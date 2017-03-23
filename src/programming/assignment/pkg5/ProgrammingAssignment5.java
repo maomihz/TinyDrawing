@@ -14,9 +14,6 @@ import java.awt.*;
  */
 public class ProgrammingAssignment5 extends JFrame {
 
-    /**
-     *
-     */
     public ProgrammingAssignment5() {
         super("Java2D Drawings by Qiyi Shan");
         setSize(900, 600);
@@ -33,12 +30,12 @@ public class ProgrammingAssignment5 extends JFrame {
 
 class MainPanel extends JPanel {
 
-    public SettingPanel settingPanel;
-    public DrawingPanel drawingPanel;
-    public GraphicSettings settings;
+    SettingPanel settingPanel;
+    DrawingPanel drawingPanel;
+    GraphicSettings settings;
     private JLabel statusLabel;
 
-    public MainPanel() {
+    MainPanel() {
         settings = new GraphicSettings();
 
         GridBagLayout grid = new GridBagLayout();

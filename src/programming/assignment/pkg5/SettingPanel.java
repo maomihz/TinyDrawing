@@ -15,9 +15,9 @@ class SettingPanel extends JPanel {
     private JCheckBox filledCheckBox, gradientCheckBox, dashedCheckBox;
     private JTextField lineField, dashField;
     private ArrayList<DrawingPanel> actionList = new ArrayList<>();
-    public MainPanel mainPanel;
+    MainPanel mainPanel;
 
-    public SettingPanel(GraphicSettings settings) {
+    SettingPanel(GraphicSettings settings) {
         setLayout(new GridLayout(2, 6));
         // undoButton
         {
@@ -108,11 +108,11 @@ class SettingPanel extends JPanel {
         // line field
         {
             add(new JLabel("Line Width:"));
-            lineField = new JTextField(3);
+            lineField = new JTextField(String.valueOf(settings.lineWidth), 3);
             lineField.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    //TODO update line width
+                    settings.lineWidth = Integer.getInteger(lineField.getText());
                 }
             });
             add(lineField);
@@ -120,11 +120,11 @@ class SettingPanel extends JPanel {
         // Dash Length
         {
             add(new JLabel("Dash Length"));
-            dashField = new JTextField(3);
+            dashField = new JTextField(String.valueOf(settings.dashLength), 3);
             dashField.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    //TODO update dash field
+                    settings.dashLength = Integer.getInteger(dashField.getText());
                 }
             });
             add(dashField);

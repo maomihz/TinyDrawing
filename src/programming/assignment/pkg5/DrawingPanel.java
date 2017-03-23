@@ -6,12 +6,15 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.ArrayList;
 
 class DrawingPanel extends JPanel implements MouseListener, MouseMotionListener {
     private GraphicSettings settings;
-    public Point startPoint, endPoint;
+    private Point startPoint, endPoint;
+    private ArrayList<DrawingAction> actionList = new ArrayList<>();
 
-    public DrawingPanel(GraphicSettings settings) {
+
+    DrawingPanel(GraphicSettings settings) {
         this.settings = settings;
         setBackground(Color.white);
         addMouseListener(this);
@@ -22,50 +25,73 @@ class DrawingPanel extends JPanel implements MouseListener, MouseMotionListener 
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
-        updateGraphics(g2d);
-        drawShapes(g2d);
+        for (DrawingAction action : actionList) {
+            updateGraphics(g2d, action);
+            drawShapes(g2d, action);
+        }
+        updateGraphics(g2d, null);
+        drawShapes(g2d, null);
     }
 
-    private void updateGraphics(Graphics2D g2d) {
-        if (settings.dashed) {
-            g2d.setStroke(new BasicStroke(settings.lineWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
-        } else {
-            g2d.setStroke(new BasicStroke(settings.lineWidth));
+    private void updateGraphics(Graphics2D g2d, DrawingAction action) {
+        if (action == null) {
+            action = new DrawingAction(settings, startPoint, endPoint);
         }
-        if (settings.gradient && settings.firstColor != null && startPoint != null && endPoint != null) {
-            g2d.setPaint(new GradientPaint(startPoint.x, startPoint.y, settings.firstColor, endPoint.x, endPoint.y, settings.secondColor));
-        } else if (settings.firstColor != null) {
-            g2d.setPaint(new GradientPaint(0, 0, settings.firstColor, 100, 0, settings.firstColor));
+        if (action.settings.dashed) {
+            g2d.setStroke(new BasicStroke(action.settings.lineWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
+        } else {
+            g2d.setStroke(new BasicStroke(action.settings.lineWidth));
+        }
+        if (action.settings.gradient && action.settings.firstColor != null && action.startPoint != null && action.endPoint != null) {
+            g2d.setPaint(new GradientPaint(action.startPoint.x, action.startPoint.y, action.settings.firstColor, action.endPoint.x, action.endPoint.y, action.settings.secondColor));
+        } else if (action.settings.firstColor != null) {
+            g2d.setPaint(new GradientPaint(0, 0, action.settings.firstColor, 100, 0, action.settings.firstColor));
         } else {
             throw new RuntimeException("first Color not initialized");
         }
     }
 
-    private void drawShapes(Graphics2D g) {
-        if (settings.filled && startPoint != null && endPoint != null) {
-            switch (settings.shape) {
-                case ("Line"):
-                    g.drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y);
-                    break;
+    private void drawShapes(Graphics2D g, DrawingAction action) {
+        if (startPoint == null || endPoint == null) {
+            return;
+        }
+        if (action == null) {
+            action = new DrawingAction(settings, startPoint, endPoint);
+        }
+        int startX = action.startPoint.x, startY = action.startPoint.y, width = action.endPoint.x - action.startPoint.x, height = action.endPoint.y - action.startPoint.y;
+        if (width < 0) {
+            width = -width;
+            startX -= width;
+        }
+
+        if (height < 0) {
+            height = -height;
+            startY -= height;
+        }
+        if (action.settings.shape.equals("Line")) {
+            g.drawLine(action.startPoint.x, action.startPoint.y, action.endPoint.x, action.endPoint.y);
+        } else if (action.settings.filled) {
+            switch (action.settings.shape) {
                 case ("Rectangle"):
-                    g.fillRect(startPoint.x, startPoint.y, endPoint.x - startPoint.x, endPoint.y - startPoint.y);
+                    g.fillRect(startX, startY, width, height);
                     break;
                 case ("Oval"):
-                    g.fillOval(startPoint.x, startPoint.y, endPoint.x - startPoint.x, endPoint.y - startPoint.y);
+                    g.fillOval(startX, startY, width, height);
+                    break;
+                case ("Line"):
                     break;
                 default:
                     throw new RuntimeException(settings.shape + " is not supported shape?");
             }
-        } else if (startPoint != null && endPoint != null) {
-            switch (settings.shape) {
-                case ("Line"):
-                    g.drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y);
-                    break;
+        } else {
+            switch (action.settings.shape) {
                 case ("Rectangle"):
-                    g.drawRect(startPoint.x, startPoint.y, endPoint.x - startPoint.x, endPoint.y - startPoint.y);
+                    g.drawRect(startX, startY, width, height);
                     break;
                 case ("Oval"):
-                    g.drawOval(startPoint.x, startPoint.y, endPoint.x - startPoint.x, endPoint.y - startPoint.y);
+                    g.drawOval(startX, startY, width, height);
+                    break;
+                case ("Line"):
                     break;
                 default:
                     throw new RuntimeException(settings.shape + " is not supported shape?");
@@ -73,6 +99,9 @@ class DrawingPanel extends JPanel implements MouseListener, MouseMotionListener 
         }
     }
 
+    private void addDrawingAction() {
+        actionList.add(new DrawingAction(settings.copy(), startPoint, endPoint));
+    }
 
     @Override
     public void mouseExited(MouseEvent e) {
@@ -81,7 +110,7 @@ class DrawingPanel extends JPanel implements MouseListener, MouseMotionListener 
     @Override
     public void mouseReleased(MouseEvent e) {
         if (endPoint != null) {
-            //TODO paint the object
+            addDrawingAction();
         }
         startPoint = null;
         endPoint = null;
@@ -113,4 +142,15 @@ class DrawingPanel extends JPanel implements MouseListener, MouseMotionListener 
         this.repaint();
     }
 
+}
+
+class DrawingAction {
+    GraphicSettings settings;
+    Point startPoint, endPoint;
+
+    DrawingAction(GraphicSettings settings, Point p1, Point p2) {
+        this.settings = settings;
+        this.startPoint = p1;
+        this.endPoint = p2;
+    }
 }
