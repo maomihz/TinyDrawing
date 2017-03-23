@@ -7,8 +7,6 @@ package programming.assignment.pkg5;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 
 /**
@@ -17,13 +15,13 @@ import java.awt.event.MouseEvent;
 public class ProgrammingAssignment5 extends JFrame {
 
     /**
-     * @param args the command line arguments
+     *
      */
     public ProgrammingAssignment5() {
         super("Java2D Drawings by Qiyi Shan");
         setSize(900, 600);
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         add(new MainPanel());
     }
 

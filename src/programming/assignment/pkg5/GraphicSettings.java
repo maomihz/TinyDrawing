@@ -2,12 +2,10 @@ package programming.assignment.pkg5;
 
 import java.awt.*;
 
-/**
- * Created by Seancheey on 23/03/2017.
- */
-
 public class GraphicSettings {
-    public boolean filled, gradient, dashed;
-    public int shape, lineWidth, dashLength;
-    public Color firstColor, secondColor;
+    protected boolean filled, gradient, dashed;
+    protected int lineWidth = 2, dashLength = 5;
+    protected String shape = "Line";
+    protected Color firstColor = Color.black, secondColor = Color.red;
+    protected static final String[] SHAPES = {"Line", "Oval", "Rectangle"};
 }
