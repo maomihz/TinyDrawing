@@ -19,6 +19,7 @@ public class ProgrammingAssignment5 extends JFrame {
         setSize(900, 600);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        //  setResizable(false);
         add(new MainPanel());
     }
 
@@ -30,9 +31,9 @@ public class ProgrammingAssignment5 extends JFrame {
 
 class MainPanel extends JPanel {
 
-    SettingPanel settingPanel;
+    private SettingPanel settingPanel;
     DrawingPanel drawingPanel;
-    GraphicSettings settings;
+    private GraphicSettings settings;
     private JLabel statusLabel;
 
     MainPanel() {

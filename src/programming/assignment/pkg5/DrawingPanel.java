@@ -11,7 +11,7 @@ import java.util.ArrayList;
 class DrawingPanel extends JPanel implements MouseListener, MouseMotionListener {
     private GraphicSettings settings;
     private Point startPoint, endPoint;
-    private ArrayList<DrawingAction> actionList = new ArrayList<>();
+    ArrayList<DrawingAction> actionList = new ArrayList<>();
 
 
     DrawingPanel(GraphicSettings settings) {
@@ -52,11 +52,12 @@ class DrawingPanel extends JPanel implements MouseListener, MouseMotionListener 
     }
 
     private void drawShapes(Graphics2D g, DrawingAction action) {
-        if (startPoint == null || endPoint == null) {
-            return;
-        }
+
         if (action == null) {
             action = new DrawingAction(settings, startPoint, endPoint);
+        }
+        if (action.startPoint == null || action.endPoint == null) {
+            return;
         }
         int startX = action.startPoint.x, startY = action.startPoint.y, width = action.endPoint.x - action.startPoint.x, height = action.endPoint.y - action.startPoint.y;
         if (width < 0) {
@@ -138,7 +139,6 @@ class DrawingPanel extends JPanel implements MouseListener, MouseMotionListener 
     @Override
     public void mouseDragged(MouseEvent e) {
         endPoint = e.getPoint();
-        System.out.println(startPoint + "  " + endPoint);
         this.repaint();
     }
 
