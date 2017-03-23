@@ -1,6 +1,8 @@
 package programming.assignment.pkg5;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -109,10 +111,35 @@ class SettingPanel extends JPanel {
         {
             add(new JLabel("Line Width:"));
             lineField = new JTextField(String.valueOf(settings.lineWidth), 3);
-            lineField.addActionListener(new ActionListener() {
+            lineField.getDocument().addDocumentListener(new DocumentListener() {
+                private void update() {
+                    try {
+                        int num = Integer.parseInt(lineField.getText());
+                        if (num <= 0) {
+                            JOptionPane.showMessageDialog(null,
+                                    "Error: Please enter number bigger than 0", "Error Massage",
+                                    JOptionPane.ERROR_MESSAGE);
+                        } else {
+                            settings.lineWidth = num;
+                        }
+                    } catch (NumberFormatException e) {
+                        settings.lineWidth = 2;
+                    }
+                }
+
                 @Override
-                public void actionPerformed(ActionEvent e) {
-                    settings.lineWidth = Integer.getInteger(lineField.getText());
+                public void insertUpdate(DocumentEvent e) {
+                    update();
+                }
+
+                @Override
+                public void removeUpdate(DocumentEvent e) {
+                    update();
+                }
+
+                @Override
+                public void changedUpdate(DocumentEvent e) {
+                    update();
                 }
             });
             add(lineField);
@@ -121,10 +148,35 @@ class SettingPanel extends JPanel {
         {
             add(new JLabel("Dash Length"));
             dashField = new JTextField(String.valueOf(settings.dashLength), 3);
-            dashField.addActionListener(new ActionListener() {
+            dashField.getDocument().addDocumentListener(new DocumentListener() {
+                private void update() {
+                    try {
+                        int num = Integer.parseInt(dashField.getText());
+                        if (num <= 0) {
+                            JOptionPane.showMessageDialog(null,
+                                    "Error: Please enter number bigger than 0", "Error Massage",
+                                    JOptionPane.ERROR_MESSAGE);
+                        } else {
+                            settings.dashLength = num;
+                        }
+                    } catch (NumberFormatException e) {
+                        settings.dashLength = 2;
+                    }
+                }
+
                 @Override
-                public void actionPerformed(ActionEvent e) {
-                    settings.dashLength = Integer.getInteger(dashField.getText());
+                public void insertUpdate(DocumentEvent e) {
+                    update();
+                }
+
+                @Override
+                public void removeUpdate(DocumentEvent e) {
+                    update();
+                }
+
+                @Override
+                public void changedUpdate(DocumentEvent e) {
+                    update();
                 }
             });
             add(dashField);
