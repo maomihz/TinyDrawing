@@ -4,3 +4,4 @@ build.xml
 test/
 nbproject/
 manifest.mf
+.DS_Store

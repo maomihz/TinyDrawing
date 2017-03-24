@@ -7,7 +7,7 @@ class GraphicSettings {
     int lineWidth = 2, dashLength = 5;
     String shape = "Line";
     Color firstColor = Color.black, secondColor = Color.red;
-    static final String[] SHAPES = {"Line", "Oval", "Rectangle", "Stroke"};
+    static final String[] SHAPES = {"Stroke", "Line", "Oval", "Rectangle"};
 
     GraphicSettings copy() {
         GraphicSettings g = new GraphicSettings();
