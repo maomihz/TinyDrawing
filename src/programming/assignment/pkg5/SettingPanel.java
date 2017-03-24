@@ -74,6 +74,9 @@ class SettingPanel extends JPanel {
             firstColorButton = new JButton("1st Color");
             firstColorButton.addActionListener(e -> {
                     settings.firstColor = JColorChooser.showDialog(null, "Choose A Color", settings.firstColor);
+                if (settings.firstColor == null) {
+                    settings.firstColor = Color.black;
+                }
                     firstColorButton.setBackground(settings.firstColor);//TODO why color didn't change?
             });
             add(firstColorButton);
@@ -83,6 +86,9 @@ class SettingPanel extends JPanel {
             secondColorButton = new JButton("2nd Color");
             secondColorButton.addActionListener(e -> {
                     settings.secondColor = JColorChooser.showDialog(null, "Choose A Color", settings.secondColor);
+                if (settings.secondColor == null) {
+                    settings.secondColor = Color.black;
+                }
                     secondColorButton.setBackground(settings.secondColor);//TODO why color didn't change?
             });
             add(secondColorButton);
