@@ -164,6 +164,7 @@ class SettingPanel extends JPanel {
         // Dashed check box
         {
             dashedCheckBox = new JCheckBox("Dashed");
+            dashedCheckBox.addItemListener(e -> settings.dashed = dashedCheckBox.isSelected());
             add(dashedCheckBox);
         }
     }

@@ -12,10 +12,11 @@ class DrawingPanel extends JPanel implements MouseListener, MouseMotionListener 
     private GraphicSettings settings;
     private Point startPoint, endPoint;
     ArrayList<DrawingAction> actionList = new ArrayList<>();
+    private MainPanel mainPanel;
 
-
-    DrawingPanel(GraphicSettings settings) {
+    DrawingPanel(GraphicSettings settings, MainPanel mainPanel) {
         this.settings = settings;
+        this.mainPanel = mainPanel;
         setBackground(Color.white);
         addMouseListener(this);
         addMouseMotionListener(this);
@@ -38,9 +39,9 @@ class DrawingPanel extends JPanel implements MouseListener, MouseMotionListener 
             action = new DrawingAction(settings, startPoint, endPoint);
         }
         if (action.settings.dashed) {
-            g2d.setStroke(new BasicStroke(action.settings.lineWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
+            g2d.setStroke(new BasicStroke(action.settings.lineWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 10, new float[]{action.settings.dashLength}, 0));
         } else {
-            g2d.setStroke(new BasicStroke(action.settings.lineWidth));
+            g2d.setStroke(new BasicStroke(action.settings.lineWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
         }
         if (action.settings.gradient && action.settings.firstColor != null && action.startPoint != null && action.endPoint != null) {
             g2d.setPaint(new GradientPaint(action.startPoint.x, action.startPoint.y, action.settings.firstColor, action.endPoint.x, action.endPoint.y, action.settings.secondColor));
@@ -134,6 +135,7 @@ class DrawingPanel extends JPanel implements MouseListener, MouseMotionListener 
 
     @Override
     public void mouseMoved(MouseEvent e) {
+        mainPanel.updateMouseLabel(e.getPoint());
     }
 
     @Override
@@ -141,7 +143,6 @@ class DrawingPanel extends JPanel implements MouseListener, MouseMotionListener 
         endPoint = e.getPoint();
         this.repaint();
     }
-
 }
 
 class DrawingAction {

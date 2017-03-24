@@ -34,7 +34,7 @@ class MainPanel extends JPanel {
     private SettingPanel settingPanel;
     DrawingPanel drawingPanel;
     private GraphicSettings settings;
-    private JLabel statusLabel;
+    private JLabel mouseLabel;
 
     MainPanel() {
         settings = new GraphicSettings();
@@ -54,11 +54,21 @@ class MainPanel extends JPanel {
         c.gridheight = 5;
         c.weighty = 0.9;
         c.fill = GridBagConstraints.BOTH;
-        drawingPanel = new DrawingPanel(settings);
+        drawingPanel = new DrawingPanel(settings, this);
         grid.setConstraints(drawingPanel, c);
         add(settingPanel);
         add(drawingPanel);
         setLayout(grid);
+        c.gridy = 6;
+        c.weighty = 0;
+        mouseLabel = new JLabel("(0,0)");
+        grid.setConstraints(mouseLabel, c);
+        add(mouseLabel);
     }
+
+    void updateMouseLabel(Point p) {
+        mouseLabel.setText("(" + String.valueOf(p.x) + "," + String.valueOf(p.y) + ")");
+    }
+
 }
 
