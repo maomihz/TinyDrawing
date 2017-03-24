@@ -1,6 +1,6 @@
 package programming.assignment.pkg5;
 
-import java.awt.*;
+import java.awt.Color;
 
 class GraphicSettings {
     boolean filled, gradient, dashed;

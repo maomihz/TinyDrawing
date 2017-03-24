@@ -1,12 +1,17 @@
 package programming.assignment.pkg5;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.MouseEvent;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.GradientPaint;
+import java.awt.Graphics2D;
+import java.awt.Graphics;
 import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.ArrayList;
+import javax.swing.JPanel;
 
-class DrawingPanel extends JPanel {
+public class DrawingPanel extends JPanel {
     private GraphicSettings settings;
 
     private DrawingAction preview; //The preview action
@@ -146,18 +151,5 @@ class DrawingPanel extends JPanel {
 
     private void addDrawingAction() {
         actionList.add(preview);
-    }
-}
-
-class DrawingAction {
-    GraphicSettings settings;
-    Point startPoint, endPoint;
-    ArrayList<Point> middlePoints;
-
-    DrawingAction(GraphicSettings settings, Point p1, Point p2) {
-        this.settings = settings;
-        this.startPoint = p1;
-        this.endPoint = p2;
-        middlePoints = new ArrayList<Point>();
     }
 }
