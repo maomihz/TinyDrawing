@@ -5,7 +5,7 @@ import java.awt.*;
 class GraphicSettings {
     boolean filled, gradient, dashed;
     int lineWidth = 2, dashLength = 5;
-    String shape = "Line";
+    String shape = "Stroke";
     Color firstColor = Color.black, secondColor = Color.red;
     static final String[] SHAPES = {"Stroke", "Line", "Oval", "Rectangle"};
 
