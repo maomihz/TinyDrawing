@@ -1,42 +1,76 @@
 package programming.assignment.pkg5;
 
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseAdapter;
 import java.util.ArrayList;
 
-class DrawingPanel extends JPanel implements MouseListener, MouseMotionListener {
+class DrawingPanel extends JPanel {
     private GraphicSettings settings;
-    private Point startPoint, endPoint;
-    ArrayList<DrawingAction> actionList = new ArrayList<>();
+
+    private DrawingAction preview; //The preview action
+    ArrayList<DrawingAction> actionList = new ArrayList<>(); //Action list history
+
     private MainPanel mainPanel;
+
+    // The mouse listener that fires action in this class
+    private MouseAdapter myMouseListener = new MouseAdapter() {
+        @Override
+        public void mousePressed(MouseEvent e) {
+            preview = new DrawingAction(settings.copy(), e.getPoint(), e.getPoint());
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            if (preview != null) {
+                addDrawingAction();
+            }
+            preview = null;
+        }
+
+        @Override
+        public void mouseMoved(MouseEvent e) {
+           mainPanel.updateMouseLabel(e.getPoint());
+        }
+
+        @Override
+        public void mouseDragged(MouseEvent e) {
+            if (preview.settings.shape.equals("Stroke")) {
+                preview.middlePoints.add(e.getPoint());
+            }
+            preview.endPoint = e.getPoint();
+            DrawingPanel.this.repaint();
+        }
+    };
 
     DrawingPanel(GraphicSettings settings, MainPanel mainPanel) {
         this.settings = settings;
         this.mainPanel = mainPanel;
         setBackground(Color.white);
-        addMouseListener(this);
-        addMouseMotionListener(this);
+        addMouseListener(myMouseListener);
+        addMouseMotionListener(myMouseListener);
     }
 
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
+        // redraw all the previous actions
         for (DrawingAction action : actionList) {
             updateGraphics(g2d, action);
             drawShapes(g2d, action);
         }
-        updateGraphics(g2d, null);
-        drawShapes(g2d, null);
+        // Passing null renders live preview, if preview exists
+        if (preview != null) {
+            updateGraphics(g2d, null);
+            drawShapes(g2d, null);
+        }
     }
 
     private void updateGraphics(Graphics2D g2d, DrawingAction action) {
         if (action == null) {
-            action = new DrawingAction(settings, startPoint, endPoint);
+            action = preview;
         }
         if (action.settings.dashed) {
             g2d.setStroke(new BasicStroke(action.settings.lineWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 10, new float[]{action.settings.dashLength}, 0));
@@ -53,9 +87,8 @@ class DrawingPanel extends JPanel implements MouseListener, MouseMotionListener 
     }
 
     private void drawShapes(Graphics2D g, DrawingAction action) {
-
         if (action == null) {
-            action = new DrawingAction(settings, startPoint, endPoint);
+            action = preview;
         }
         if (action.startPoint == null || action.endPoint == null) {
             return;
@@ -70,8 +103,16 @@ class DrawingPanel extends JPanel implements MouseListener, MouseMotionListener 
             height = -height;
             startY -= height;
         }
-        if (action.settings.shape.equals("Line")) {
-            g.drawLine(action.startPoint.x, action.startPoint.y, action.endPoint.x, action.endPoint.y);
+        if (action.settings.shape.equals("Line") || action.settings.shape.equals("Stroke")) {
+            if (action.middlePoints.size() == 0) {
+                g.drawLine(action.startPoint.x, action.startPoint.y, action.endPoint.x, action.endPoint.y);
+            } else {
+                g.drawLine(action.startPoint.x, action.startPoint.y, action.middlePoints.get(0).x, action.middlePoints.get(0).y);
+                for (int i=1; i<action.middlePoints.size(); i++) {
+                    g.drawLine(action.middlePoints.get(i-1).x, action.middlePoints.get(i-1).y, action.middlePoints.get(i).x, action.middlePoints.get(i).y);
+                }
+                g.drawLine(action.middlePoints.get(action.middlePoints.size() - 1).x, action.middlePoints.get(action.middlePoints.size() - 1).y, action.endPoint.x, action.endPoint.y);
+            }
         } else if (action.settings.filled) {
             switch (action.settings.shape) {
                 case ("Rectangle"):
@@ -81,6 +122,7 @@ class DrawingPanel extends JPanel implements MouseListener, MouseMotionListener 
                     g.fillOval(startX, startY, width, height);
                     break;
                 case ("Line"):
+                case ("Stroke"):
                     break;
                 default:
                     throw new RuntimeException(settings.shape + " is not supported shape?");
@@ -94,6 +136,7 @@ class DrawingPanel extends JPanel implements MouseListener, MouseMotionListener 
                     g.drawOval(startX, startY, width, height);
                     break;
                 case ("Line"):
+                case ("Stroke"):
                     break;
                 default:
                     throw new RuntimeException(settings.shape + " is not supported shape?");
@@ -102,56 +145,19 @@ class DrawingPanel extends JPanel implements MouseListener, MouseMotionListener 
     }
 
     private void addDrawingAction() {
-        actionList.add(new DrawingAction(settings.copy(), startPoint, endPoint));
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-        if (endPoint != null) {
-            addDrawingAction();
-        }
-        startPoint = null;
-        endPoint = null;
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-        startPoint = e.getPoint();
-    }
-
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-    }
-
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-    }
-
-    @Override
-    public void mouseMoved(MouseEvent e) {
-        mainPanel.updateMouseLabel(e.getPoint());
-    }
-
-    @Override
-    public void mouseDragged(MouseEvent e) {
-        endPoint = e.getPoint();
-        this.repaint();
+        actionList.add(preview);
     }
 }
 
 class DrawingAction {
     GraphicSettings settings;
     Point startPoint, endPoint;
+    ArrayList<Point> middlePoints;
 
     DrawingAction(GraphicSettings settings, Point p1, Point p2) {
         this.settings = settings;
         this.startPoint = p1;
         this.endPoint = p2;
+        middlePoints = new ArrayList<Point>();
     }
 }

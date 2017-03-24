@@ -15,7 +15,7 @@ import java.awt.*;
 public class ProgrammingAssignment5 extends JFrame {
 
     public ProgrammingAssignment5() {
-        super("Java2D Drawings by Qiyi Shan");
+        super("Java2D Drawings by Qiyi Shan & MaomiHz");
         setSize(900, 600);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -71,4 +71,3 @@ class MainPanel extends JPanel {
     }
 
 }
-
